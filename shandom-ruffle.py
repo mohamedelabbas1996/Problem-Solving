@@ -8,7 +8,7 @@ class Node:
         self.right = right
 class RangeTree:
     def __init__(self,n):
-        self.root = Node(None,None,None,1,n,0)
+        self.root = Node(None,None,None,1,n,None)
         self.n = n
         self._build_tree(self.root)
     def traverse(self,root):
@@ -35,8 +35,8 @@ class RangeTree:
         if root.range_max - root.range_min == 1:
             print "build tree min {0} max {1}".format(root.range_min,root.range_max)
 
-            root.right = Node (root,None,None,root.range_max,root.range_max,0)
-            root.left = Node (root,None,None,root.range_min,root.range_min,0)
+            root.right = Node (root,None,None,root.range_max,root.range_max,None)
+            root.left = Node (root,None,None,root.range_min,root.range_min,None)
             return
             # self._build_tree(root.right)
             # self._build_tree(root.left)
@@ -50,8 +50,8 @@ class RangeTree:
 
         #print root.range_min,mid_point,root.range_max
 
-        root.right = Node (root,None,None,mid_point+1,root.range_max,0)
-        root.left = Node (root,None,None,root.range_min,mid_point,0)
+        root.right = Node (root,None,None,mid_point+1,root.range_max,None)
+        root.left = Node (root,None,None,root.range_min,mid_point,None)
         self._build_tree(root.right)
         self._build_tree(root.left)
 
@@ -61,10 +61,21 @@ class RangeTree:
         mid_point = root.range_min + (root.range_max - root.range_min)/2
         #assert 1<=range_min<=range_max<=self.n
         if range_min == root.range_min and range_max == root.range_max:
-            if root.value != 0:
-                # change children value 
-                pass
-            root.value = value
+            if root.root != None:
+                if root.root.left == root :
+                     root.root.right.value = root.root.value
+                     root.root.value = None 
+                else:
+                    root.root.left.value = root.root.value
+                    root.root.value = None 
+
+
+               
+              
+            if root.value ==None: 
+                root.value = value
+            else:
+                root.value +=value    
 
             print "value assigned"
             return 
@@ -95,12 +106,56 @@ class RangeTree:
             print "min {0} max {1}".format(range_min,range_max)       
 
 
+
+def shandom_ruffle_naive(a,b,A):
+    a-=1
+    b-=1
+    bStart = b
+    while a<bStart and b<=len(A):
+        temp = A[a]
+        A[a] = A[b]
+        A[b] = temp
+        a+=1
+        b+=1
+    return A
+
+def random_shuffle():
+    #handle input
+    #n = map(int,raw_input())
+    n =4 
+    ABs=[(3,1),(1,3),(3,2),(2,3)]
+
+
+   
+    tree = RangeTree(n)
+    
+    for _ in xrange(n):
+        #a,b = map(int,raw_input().split())
+        a,b = ABs[_] 
+        if (a<b):
+            if (b-a< n -b ):    
+                tree.change_range_value(tree.root,a,b-1,b-a)
+                tree.change_range_value(tree.root,b,2*b-a,a-b)
+            else:
+                tree.change_range_value(tree.root,a,b,b-a)  
+                tree.change_range_value(tree.root,b,n,a-b)  
+        else:
+            continue
+    return tree   
+
+       # ABs.append(map(int,raw_input().split()))
+    
+
+
+
+
+
 def main():
-    print "hello"
-    tree = RangeTree(4)
-    tree.change_range_value(tree.root,1,3,-1)
-    print 
-    tree.change_range_value(tree.root,2,3,-1)
+    #print "hello"
+    tree =random_shuffle()
+    #tree.change_range_value(tree.root,1,3,-1)
+    #print 
+    #tree.change_range_value(tree.root,2,3,-1)
     tree.traverse(tree.root)
     
 
