@@ -1,0 +1,26 @@
+Requirements comparison:
+Background: ISO26262 (Functional Safety, FuSi for short) requires a tool qualification for the tools used (here Python implementation requirements import). The so-called requirements package (implemented in Python) ports requirements and test specifications from various different sources into various other different goals (e.g. ReqIF -> Jira or Jira -> ReqIF). Existing requirements in the target system are not newly created, but updated and if they are no longer available in the source, they are moved to a so-called "DeletedRequirements" folder in the target system. Requirements that do not exist are recreated in the target system.
+Goal of the work: Primary goal: A Python-independent implementation in the programming language "Java" has to be created, which reads in requirements from the source (ReqIF, CSV, Enterprise Architect, Jira) as well as from the target (same as with source). The read-in data is transferred to so-called requirements trees (Java internal classes) and the source and target are compared with one another. If the Python implementation has carried out a correct transfer from source to target, there should be no difference in the individual attributes and / or order of the elements in the tree for the requirements (and trees) read in Java from source and target.
+Further goals:
+• A standard Maven Java project (folder structure: src / main / java and src / main / test) is to be created with a pom.xml for the configuration management of the project
+• There should be different frameworks for reading in requirements from the above. Sources / targets are validated and compared with one another, whereby one of these frameworks should then be used
+• It should be clarified whether a separate implementation is necessary if there is no framework for a source, and this should be implemented accordingly
+• The requirements comparison (also trees and in the Java programming language) must synchronize and validate both all attributes (see implementation requirements package Python) and the order of the individual elements
+• The program should be able to be started as a command line program, whereby a path to a .json config file must be transferred and, if necessary, user login data (e.g. for logging in to Jira to read out the requirements).
+• The .json config file should be designed in such a way that the following configuration parameters can be set:
+o Type of comparison (reqif-csv, reqif-ea, reqif-jira etc.)
+o Paths to files (ReqIF document, CSV document, Enterprise Architect document) that are to be imported
+o Web link to Jira (optional if not read from Jira)
+o Project in Jira (optional if not read from Jira)
+o Path / folder under which the requirements can be found in Jira (optional if not read from Jira)
+o Mapping of attributes from the source to attributes of the requirement class
+o Mapping of attributes from target to attributes of the requirement class
+
+• Unit tests (Mockito or similar) are to be written, which test the implementation of the comparison and ensure that the data from the source and target are read in correctly
+Possible import cases that can be done in Python:
+To Jira: ReqIF -> Jira Enterprise Architect -> Jira CSV files -> Jira
+According to CSV: ReqIF -> CSV Enterprise Architect -> CSV Jira -> CSV
+According to ReqIF: Jira -> ReqIF Enterprise Architect -> ReqIF CSV -> ReqIF
+To Enterprise Architect: ReqIF -> Enterprise ArchitectJira -> Enterprise Architect CSV -> Enterprise Architect
+As a result, the program must be able to read in and compare from all the systems mentioned. The comparison is always 1: 1.
+For the implementation of the requirement class in Java, the implementation of the class from the requirements package in Python can be used as a reference. If possible, the individual attributes should be congruent.
